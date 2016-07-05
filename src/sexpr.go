@@ -1,31 +1,60 @@
 package main
 
-import "fmt"
+import ("fmt"
+	"strings"
+)
 
 type s_expr struct {
 	value *atom
-	left  *s_expr
-	right *s_expr
+	args []*s_expr
 }
 
-type atom struct {
-	node interface{}
+type atom interface {}
+
+func tokenize(expr string) []string {
+	expr = strings.Replace(expr, "(", " ( ", -1)
+	expr = strings.Replace(expr, ")", " ) ", -1)
+	return strings.Split(expr, "")
 }
 
 
-func f(b bool) interface{} {
-	if b {
-		return 1
-	} else {
-		return "2"
+func read_tokens(tokens []string) []interface{} {
+	if len(tokens) == 0 {
+		return nil
 	}
+	var block []interface{}
+	var word string
+	for len(tokens) > 0 {
+		token := tokens[0]
+		tokens = append(tokens[:0], tokens[1:]...)
+
+		if token == "(" {
+			block = append(block, read_tokens(tokens))
+		} else if token == " " {
+			if len(word) > 0 {
+				block = append(block, word)
+				word = ""
+			} else {
+				continue
+			}
+		} else if token == "\"" {
+			var str string
+			for tokens[0] != "\"" {
+				str += tokens[0]
+				tokens = append(tokens[:0], tokens[1:]...)
+			}
+			block = append(block, str)
+		} else if token == ")" {
+			return block
+		} else {
+			word += token
+		}
+	}
+	return block
 }
-
-
 
 func main() {
-	a := atom{"abc"}
-	fmt.Print(a.node)
+	fmt.Println(read_tokens(tokenize("(begin (define r 10) (* pi (* r r)))")))
 }
 
 
