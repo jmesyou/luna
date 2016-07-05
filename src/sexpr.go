@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import ("fmt"
+	"strings"
+)
 
 type s_expr struct {
 	value *atom
@@ -12,20 +14,25 @@ type atom struct {
 	node interface{}
 }
 
+func parse(expr string) []interface{} {
+	expr = strings.Replace(expr, "(", " ( ", -1)
+	expr = strings.Replace(expr, ")", " ) ", -1)
+	tokens := strings.Fields(expr)
+	var sexp []interface{}
 
-func f(b bool) interface{} {
-	if b {
-		return 1
-	} else {
-		return "2"
+	for _, token := range tokens {
+		if token == "(" {
+			var block []interface{}
+			sexp = append(sexp, block)
+		} else if token == ")" {
+			continue
+		}
 	}
+	return sexp
 }
 
-
-
 func main() {
-	a := atom{"abc"}
-	fmt.Print(a.node)
+	fmt.Println(parse("( () () ( ) )"))
 }
 
 
