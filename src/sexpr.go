@@ -37,9 +37,11 @@ func read_tokens(tokens []string) []interface{} {
 			} else {
 				continue
 			}
-		} else if token == "\"" {
+		} else if token == "\\'" {
 			var str string
-			for tokens[0] != "\"" {
+			str += token
+			for tokens[0] != "\\'" {
+				fmt.Println(tokens[0])
 				str += tokens[0]
 				tokens = append(tokens[:0], tokens[1:]...)
 			}
@@ -54,7 +56,10 @@ func read_tokens(tokens []string) []interface{} {
 }
 
 func main() {
-	fmt.Println(read_tokens(tokenize("(begin (define r 10) (* pi (* r r)))")))
+	tokens := tokenize("(print )")
+	fmt.Println(tokens)
+	tree := read_tokens(tokens)
+	fmt.Print(tree)
 }
 
 
