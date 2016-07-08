@@ -2,7 +2,6 @@ package stack
 
 import(
 	"errors"
-	"fmt"
 )
 
 type Stack struct{

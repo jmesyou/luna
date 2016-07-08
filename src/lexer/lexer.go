@@ -1,15 +1,18 @@
-package main
+package lexer
 
 import (
 	"strings"
+	"regexp"
 )
 
-type s_expr struct {
-	value *atom
-	args []*s_expr
+var strings string = "\\'a"
+func atom(value interface{}) interface{} {
+	switch value {
+
+	}
 }
 
-type atom interface {}
+
 
 func tokenize(expr string) []string {
 	expr = strings.Replace(expr, "(", " ( ", -1)
