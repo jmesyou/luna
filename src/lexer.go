@@ -1,6 +1,6 @@
 package main
 
-import ("fmt"
+import (
 	"strings"
 )
 
@@ -41,7 +41,6 @@ func read_tokens(tokens []string) []interface{} {
 			var str string
 			str += token
 			for tokens[0] != "\\'" {
-				fmt.Println(tokens[0])
 				str += tokens[0]
 				tokens = append(tokens[:0], tokens[1:]...)
 			}
@@ -54,16 +53,3 @@ func read_tokens(tokens []string) []interface{} {
 	}
 	return block
 }
-
-func main() {
-	tokens := tokenize("(print )")
-	fmt.Println(tokens)
-	tree := read_tokens(tokens)
-	fmt.Print(tree)
-}
-
-
-/*func (expr string) parse() [][]string {
-	var sexpr
-
-}*/
