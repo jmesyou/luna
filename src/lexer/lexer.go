@@ -2,15 +2,9 @@ package lexer
 
 import (
 	"strings"
-	"regexp"
 )
 
-var strings string = "\\'a"
-func atom(value interface{}) interface{} {
-	switch value {
 
-	}
-}
 
 
 
