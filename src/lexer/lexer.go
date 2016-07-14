@@ -5,9 +5,6 @@ import (
 )
 
 
-
-
-
 func tokenize(expr string) []string {
 	expr = strings.Replace(expr, "(", " ( ", -1)
 	expr = strings.Replace(expr, ")", " ) ", -1)
@@ -49,4 +46,8 @@ func read_tokens(tokens []string) []interface{} {
 		}
 	}
 	return block
+}
+
+func lex(input string) []interface{} {
+	return read_tokens(tokenize(input))
 }
