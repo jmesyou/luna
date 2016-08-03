@@ -64,6 +64,7 @@ function List:print()
 	io.write("\n")
 end
 
+--[[
 function test_cases()
 	lista = List.new({2,3,4,5})
 	lista:print()
@@ -90,3 +91,5 @@ function test_cases()
 end
 
 test_cases()
+
+]]--
