@@ -3,24 +3,43 @@
 this is the actual parse function but
 we just want to have a functioning program right now
 
-function parse(str)
-  local expr = {}
-  local word = ""
-  local in_str = false
-  for index, char in str do
-    if char == "(" and not in_str then
-      expr[#expr+1] = {}
-    elseif char == ")" and not in_str then
-      if #word > 0 then
-        expr[#expr].insert(word)
-        word = ""
-      end
-end
 ]]--
-
 local parser = {}
 
+local START = {}
+local STRING = {}
+local ATOM = {}
 
+
+function parser.tokenize(str)
+  local state = START
+  local tokens = {}
+  local word = ""
+    for i = 1, #str do
+      local char = str:sub(i,i)
+      if state == START then
+        if      char == "("  then tokens[#tokens+1] = "("
+        elseif  char == ")"  then tokens[#tokens+1] = ")"
+        elseif  char == "\"" then state = STRING; word = ""
+        elseif  char == " "  then --nothing
+        else    state = ATOM; word = char
+        end
+      elseif state == STRING then
+        if      char == "\"" then tokens[#tokens+1] = "\"" .. word .. "\""; state = START
+        else    word = word .. char
+        end
+      elseif state == ATOM then
+        if      char == " " then tokens[#tokens+1] = word; state = START
+        elseif  char == ")" then tokens[#tokens+1] = word; tokens[#tokens+1] = ")";  state = START
+        else    word = word .. char
+        end
+      else
+        print("ERRROOOOR")
+        return
+      end
+    end
+    return tokens
+end
 
 function parser.read_tokens(tokens)
   local ast = {}
@@ -37,14 +56,6 @@ function parser.read_tokens(tokens)
   return ast
 end
 
-local function string_to_char_array(str)
-  local arr = {}
-  for i = 1, #str do
-    arr[#arr+1] = str:sub(i,i)
-  end
-  return arr
-end
-
 local function debug_table(tbl)
   local out = "( "
   for i,j in ipairs(tbl) do
@@ -54,16 +65,8 @@ local function debug_table(tbl)
       out = out .. j .. " "
     end
   end
-  out = out .. " ) "
+  out = out .. ") "
   return out
-end
-
-function parser.tokenize(str)
-  local stream = str:gsub("%s*[(]%s*", " ( "):gsub("%s*[)]%s*", " ) ")
-  stream = stream:gsub("^%s+", ""):gsub("%s+$", "")
-  fields = {}
-  stream:gsub("([^".."%s".."]*)".."%s", function(c) table.insert(fields, c) end)
-  return fields
 end
 
 function parser.atomize(str)
@@ -79,4 +82,5 @@ function parser.parse(str)
   return parser.read_tokens(parser.tokenize(str))
 end
 
+print(debug_table(parser.parse("(data \"quoted string\")")))
 return parser

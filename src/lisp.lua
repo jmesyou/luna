@@ -18,7 +18,7 @@ env = {
   ["++"] = function(x, y) return x .. y end,
   ["not"] = function(x) return not x end,
   ["number?"] = function(x) return type(x) == "number" end,
-  ["print"] = function(x) lprint(obj) end
+  ["print"] = function(obj) lprint(obj) end
 }
 for name, obj in pairs(math_lib) do env[name] = obj end
 
