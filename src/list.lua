@@ -1,67 +1,59 @@
 
+-- TODO Fold
+
+-- DEPRECATED FUNCTIONS
+-- Length -> default to #
+
+
 List = {}
-List.__index = List
+List.mt = {}
+List.mt.__index = List.mt
 
 function List.new(table)
 	local list = {}
-	setmetatable(list, List)
-	list.array = table or {}
+	setmetatable(list, List.mt)
+	list = table or {}
 	return list
 end
 
-function List:length()
-	return #self.array
+function List.append(list, obj)
+    assert(getmetatable(list) == List.mt)
+	table.insert(list, obj)
+	return list
 end
 
-function List:append(data)
-	if (type(data) ~= "table" and getmetatable(data) ~= "List") then
-		table.insert(self.array, data)
-	else
-		self:concat(data)
-	end
-	return self
+function List.cons(head, tail)
+    assert(getmetatable(tail) == List.mt)
+    table.insert(tail, head, 1)
+    return tail
 end
 
-function List:cons(data)
-	if (type(data) ~= "table" and getmetatable(data) ~= "List") then
-		table.insert(self.array, data, 1)
-		return self
-	end
-	if (getmetatable(data) ~= "List") then
-		newList = List.new(data)
-		newList:concat(self)
-		return newList
-	else
-		data:concat(self)
-		return data
-	end
-end
-
-function List:head()
-	local obj = self.array[1]
+function List.head(list)
+    assert(getmetatable(list) == List.mt)
+	local obj = list[1]
 	return obj
 end
 
-function List:tail()
-	local tailOfList = List.new()
-	for i = 2, #self.array do
-		tailOfList:append(self.array[i])
-	end
-	return tailOfList
+function List.tail(list)
+	local tail = List.new({})
+    for i = 2, #list do
+        tail[i] = list[i]
+	return tail
 end
 
-function List:concat(list)
-	for i = 1, #list.array do
-		self:append(list.array[i])
+function List.concat(lst1, lst2)
+	for i = 1, #lst2 do
+		List.append(lst1,  lst2[i])
 	end
-	return self
+	return lst1
 end
 
-function List:print()
-	for key, value in pairs (self.array) do
-		io.write(value, " ")
+function List.mt:__tostring()
+    local str = "["
+	for i = 1, #self-1 do
+		str = str .. tostring(self[i]) .. ", "
 	end
-	io.write("\n")
+	return str .. self[#self] .. "]"
 end
 
 --[[
