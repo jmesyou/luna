@@ -1,15 +1,10 @@
---TODO implemented fully featured parser with support for strings/comments
---[[
-this is the actual parse function but
-we just want to have a functioning program right now
+symbol = require "symbol"
 
-]]--
 local parser = {}
 
 local START = {}
 local STRING = {}
 local ATOM = {}
-
 
 function parser.tokenize(str)
   local state = START
@@ -82,5 +77,4 @@ function parser.parse(str)
   return parser.read_tokens(parser.tokenize(str))
 end
 
-print(debug_table(parser.parse("(data \"quoted string\")")))
 return parser
