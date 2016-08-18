@@ -11,8 +11,8 @@ List.mt.__index = List.mt
 
 function List.new(table)
 	local list = {}
-	setmetatable(list, List.mt)
 	list = table or {}
+	setmetatable(list, List.mt)
 	return list
 end
 
@@ -36,9 +36,9 @@ end
 
 function List.tail(list)
     assert(getmetatable(list) == List.mt)
-	local tail = List.new({})
+	local tail = List.new()
     for i = 2, #list do
-        tail[i] = list[i]
+        tail[i-1] = list[i]
     end
 	return tail
 end
@@ -58,10 +58,10 @@ function List.mt:__tostring()
 	return str .. self[#self] .. "]"
 end
 
---[[
+
 function test_cases()
 	lista = List.new({2,3,4,5})
-	lista:print()
+	print(tostring(list))
 
 	lista:cons(1)
 	lista:print()
@@ -84,6 +84,6 @@ function test_cases()
 	listc:print()
 end
 
-test_cases()
+--test_cases()
 
-]]--
+return List
