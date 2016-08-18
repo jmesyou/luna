@@ -35,9 +35,11 @@ function List.head(list)
 end
 
 function List.tail(list)
+    assert(getmetatable(list) == List.mt)
 	local tail = List.new({})
     for i = 2, #list do
         tail[i] = list[i]
+    end
 	return tail
 end
 

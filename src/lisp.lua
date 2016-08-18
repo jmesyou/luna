@@ -1,36 +1,11 @@
-
-
-local math_lib = require "math"
-local math_lib = require "math"
 local parser = require "parser"
-local parse = parser.parse
+local env = require "env"
+
 
 --TODO finish implementing full grammar
 
-env = {
-    ["+"] = function(x, y) return x + y end,
-    ["-"] = function(x, y) return x - y end,
-    ["*"] = function(x, y) return x * y end,
-    ["/"] = function(x, y) return x / y end,
-    ["<"] = function(x, y) return x < y end,
-    [">"] = function(x, y) return x > y end,
-    ["="] = function(x, y) return x == y end,
-    [">="] = function(x, y) return x >= y end,
-    ["<="] = function(x, y) return x <= y end,
-    ["++"] = function(x, y) return x .. y end,
-    ["not"] = function(x) return not x end,
-    ["null?"] = nil,
-    ["number?"] = function(x) return type(x) == "number" end,
-    ["symbol?"] = nil,
-    ["print"] = function(obj) lprint(obj) end,
-    ["begin"] = nil,
-    ["list"] = nil,
-    ["list?"] = nil,
-    ["car"] = nil,
-    ["cdr"] = nil,
+global_env = env.standard_env()
 
-}
-for name, obj in pairs(math_lib) do env[name] = obj end
 
 function lprint(obj)
   if obj == nil then
