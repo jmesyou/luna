@@ -16,16 +16,16 @@ function parser.tokenize(str)
         if      char == "("  then tokens[#tokens+1] = "("
         elseif  char == ")"  then tokens[#tokens+1] = ")"
         elseif  char == "\"" then state = STRING; word = ""
-        elseif  char == " "  then --nothing
+        elseif  wspace(char) then --nothing
         else    state = ATOM; word = char
         end
       elseif state == STRING then
-        if      char == "\"" then tokens[#tokens+1] = "\"" .. word .. "\""; state = START
+        if      char == "\"" then tokens[#tokens+1] = word; state = START
         else    word = word .. char
         end
       elseif state == ATOM then
-        if      char == " " then tokens[#tokens+1] = word; state = START
-        elseif  char == ")" then tokens[#tokens+1] = word; tokens[#tokens+1] = ")";  state = START
+        if      wspace(char) then tokens[#tokens+1] = parser.atomize(word); state = START
+        elseif  char == ")"  then tokens[#tokens+1] = parser.atomize(word); tokens[#tokens+1] = ")";  state = START
         else    word = word .. char
         end
       else
@@ -45,7 +45,7 @@ function parser.read_tokens(tokens)
     elseif token == ")" then
       return ast
     else
-      ast[#ast+1] = parser.atomize(token)
+      ast[#ast+1] = token
     end
   end
   return ast
@@ -67,10 +67,17 @@ end
 function parser.atomize(str)
   local atom = tonumber(str)
   if atom == nil then
-    return str
+    return symbol.new(str)
   else
     return atom
   end
+end
+
+local function wspace(char)
+  return string.byte(char) == 9  or  --tab
+         string.byte(char) == 10 or -- nl
+         string.byte(char) == 13 or  --cr
+         string.byte(char) == 32     --whitespace
 end
 
 function parser.parse(str)

@@ -56,3 +56,13 @@ function Env.mt:find(key)
     end
     return value
 end
+
+local function lprint(obj)
+    if obj == nil then
+        return nil
+    else
+        print(obj)
+    end
+end
+
+return Env
