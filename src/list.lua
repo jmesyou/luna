@@ -58,32 +58,63 @@ function List.mt:__tostring()
 	return str .. self[#self] .. "]"
 end
 
-
-function test_cases()
-	lista = List.new({2,3,4,5})
-	print(tostring(list))
-
-	lista:cons(1)
-	lista:print()
-
-	lista:append(6)
-	lista:print()
-
-	listb = List.new({7,8,8.9999,"ten"})
-	listb:print()
-
-	lista:append(listb)
-	lista:print()
-
-	listatail = lista:tail()
-	listatail:print()
-
-	print(listatail:head())
-
-	listc = lista:cons({-1,0})
-	listc:print()
+-- fold s.t. 1+2+3 -> 1+(2+3)
+function List.foldr(list, fn)
+	local head = List.head(list)
+	local tail = List.tail(list)
+	if (#list == 2) then
+		return fn(head, tail[1])
+	end
+	return fn(head, List.foldr(tail, fn))
 end
 
---test_cases()
+-- fold s.t. 1+2+3 -> (1+2)+3
+function List.foldl(list, fn)
+	local head = List.head(list)
+	local tail = List.tail(list)
+	if (#list == 2) then
+		return fn(tail[1], head)
+	end
+	return fn(List.foldl(tail, fn), head)
+end
+
+function List.filter(list, fn)
+	result = List.new()
+	for i=1, #list do
+		if (fn(list[i])) then
+			List.append(result, list[i])
+		end
+	end
+	return result
+end
+
+function List.map(list, fn)
+	local mappedlist = List.new()
+	for i=1, #list do
+		List.append(mappedlist, fn(list[i]))
+	end
+	return mappedlist
+end
+
+function add(x,y)
+	return x+y
+end
+
+function even(x)
+	return x % 2 == 0
+end
+
+function square(x)
+	return x*x
+end
+
+function test_cases()
+	local list = List.new({1,2,3,4,5,6,7,8,9,10})
+	print(List.foldl(list,add))
+	print(List.filter(list,even))
+	print(List.map(list,square))
+end
+
+test_cases()
 
 return List
