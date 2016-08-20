@@ -8,13 +8,14 @@ function List.new(table)
 	return list
 end
 
+--Appends a key onto a list
+--if the key is a list, concat them together
 function List.append(list, key)
 	assert(getmetatable(list) == List)
 	if(getmetatable(key) == List) then
-		List.concat(list, key)
-	else
-		table.insert(list, key)
+		return List.concat(list, key)
 	end
+	table.insert(list, key)
 	return list
 end
 
@@ -59,7 +60,6 @@ end
 function List.foldr(list, fn)
 	accumulator = list[#list]
 	return foldrhelper(list, #list-1, fn, accumulator)
-
 end
 
 -- essentially do a foldl starting at end instead of beginning
