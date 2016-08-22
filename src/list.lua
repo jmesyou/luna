@@ -1,9 +1,12 @@
+null = require "null"
+
 List = {}
 List.__index = List
 
 function List.new(table)
 	local list = {}
-	list = table or {}
+	if #table == 0 then list = null
+    else list = table end
 	setmetatable(list, List)
 	return list
 end
@@ -58,7 +61,7 @@ end
 
 -- fold s.t. 1+2+3 -> 1+(2+3)
 function List.foldr(list, fn)
-	accumulator = list[#list]
+	local accumulator = list[#list]
 	return foldrhelper(list, #list-1, fn, accumulator)
 end
 
@@ -91,7 +94,7 @@ end
 
 -- filter values from the list that comply with the function provided
 function List.filter(list, fn)
-	result = List.new()
+	local result = List.new()
 	for i=1, #list do
 		if (fn(list[i])) then
 			List.append(result, list[i])
