@@ -1,86 +1,112 @@
-
--- TODO Fold
-
--- DEPRECATED FUNCTIONS
--- Length -> default to #
-
-
 List = {}
-List.mt = {}
+List.__index = List
 
 function List.new(table)
-	local list = table
-	setmetatable(list, List.mt)
+	local list = {}
+	list = table or {}
+	setmetatable(list, List)
 	return list
 end
 
-function List.append(list, obj)
-	table.insert(list, obj)
+--Appends a key onto a list
+--if the key is a list, concat them together
+function List.append(list, key)
+	assert(getmetatable(list) == List)
+	if(getmetatable(key) == List) then
+		return List.concat(list, key)
+	end
+	table.insert(list, key)
 	return list
 end
 
 function List.cons(head, tail)
-    table.insert(tail, head, 1)
-    return tail
+	assert(getmetatable(tail) == List)
+	table.insert(tail, head, 1)
+	return tail
 end
 
 function List.head(list)
+	assert(getmetatable(list) == List)
 	local obj = list[1]
 	return obj
 end
 
 function List.tail(list)
-	local tail = List.new({})
-    for i = 2, #list do
-        tail[i] = list[i]
-    end
+	assert(getmetatable(list) == List)
+	local tail = List.new()
+	for i = 2, #list do
+		tail[i-1] = list[i]
+	end
 	return tail
 end
 
 function List.concat(lst1, lst2)
+	assert(getmetatable(lst1) == List and getmetatable(lst2) == List)
 	for i = 1, #lst2 do
 		List.append(lst1,  lst2[i])
 	end
 	return lst1
 end
 
-function List.mt:__tostring()
-    local str = "["
+function List:__tostring()
+	local str = "["
 	for i = 1, #self-1 do
-		str = str .. tostring(self[i]) .. ", "
+		str = str .. self[i] .. ", "
 	end
 	return str .. self[#self] .. "]"
 end
 
-list = List.new({})
-print(getmetatable(list) == List.mt)
-
---[[
-function test_cases()
-	lista = List.new({2,3,4,5})
-	lista:print()
-
-	lista:cons(1)
-	lista:print()
-
-	lista:append(6)
-	lista:print()
-
-	listb = List.new({7,8,8.9999,"ten"})
-	listb:print()
-
-	lista:append(listb)
-	lista:print()
-
-	listatail = lista:tail()
-	listatail:print()
-
-	print(listatail:head())
-
-	listc = lista:cons({-1,0})
-	listc:print()
+-- fold s.t. 1+2+3 -> 1+(2+3)
+function List.foldr(list, fn)
+	accumulator = list[#list]
+	return foldrhelper(list, #list-1, fn, accumulator)
 end
 
-test_cases()
+-- essentially do a foldl starting at end instead of beginning
+function foldrhelper(list, headindex, fn, accumulator)
+	if(headindex == 1) then
+		return fn(list[headindex], accumulator)
+	end
+	accumulator = fn(list[headindex], accumulator)
+	headindex = headindex - 1
+	return foldrhelper(list, headindex, fn, accumulator)
+end
 
-]]--
+-- fold s.t. 1+2+3 -> (1+2)+3
+-- folding only works if #list > 1
+function List.foldl(list, fn)
+	accumulator = list[1]
+	return foldlhelper(list, 2, fn, accumulator)
+end
+
+-- tail recursion optimized & reduced table creation
+function foldlhelper(list, headindex, fn, accumulator)
+	if (#list - headindex == 0) then
+		return fn(accumulator, list[headindex])
+	end
+	accumulator = fn(accumulator, list[headindex])
+	headindex = headindex + 1
+	return foldlhelper(list, headindex, fn, accumulator)
+end
+
+-- filter values from the list that comply with the function provided
+function List.filter(list, fn)
+	result = List.new()
+	for i=1, #list do
+		if (fn(list[i])) then
+			List.append(result, list[i])
+		end
+	end
+	return result
+end
+
+-- apply a given function to all the elements in the list
+function List.map(list, fn)
+	local mappedlist = List.new()
+	for i=1, #list do
+		List.append(mappedlist, fn(list[i]))
+	end
+	return mappedlist
+end
+
+return List
