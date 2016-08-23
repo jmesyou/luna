@@ -48,20 +48,20 @@ function parser.read_tokens(tokens)
       ast[#ast+1] = token
     end
   end
-  return ast
+  return ast[1]
 end
 
-local function debug_table(tbl)
-  local out = "( "
-  for i,j in ipairs(tbl) do
-    if type(j) == "table" then
-      out = out .. debug_table(j)
-    else
-      out = out .. j .. " "
+function debug_table(tbl)
+    local out = "( "
+    for i,j in ipairs(tbl) do
+        if type(j) == "table" then
+            out = out .. debug_table(j)
+        else
+            out = out .. j .. " "
+        end
     end
-  end
-  out = out .. ") "
-  return out
+    out = out .. ") "
+    return out
 end
 
 function parser.atomize(str)
@@ -73,7 +73,7 @@ function parser.atomize(str)
   end
 end
 
-local function wspace(char)
+function wspace(char)
   return string.byte(char) == 9  or  --tab
          string.byte(char) == 10 or -- nl
          string.byte(char) == 13 or  --cr
@@ -83,5 +83,7 @@ end
 function parser.parse(str)
   return parser.read_tokens(parser.tokenize(str))
 end
+
+print(debug_table(parser.parse("(+ 1 3)")))
 
 return parser

@@ -4,20 +4,14 @@ List = {}
 List.__index = List
 
 function List.new(table)
-	local list = {}
-	if #table == 0 then list = null
-    else list = table end
+	local list
+	if #table == 0 then list = null else list = table end
 	setmetatable(list, List)
 	return list
 end
 
---Appends a key onto a list
---if the key is a list, concat them together
 function List.append(list, key)
 	assert(getmetatable(list) == List)
-	if(getmetatable(key) == List) then
-		return List.concat(list, key)
-	end
 	table.insert(list, key)
 	return list
 end
