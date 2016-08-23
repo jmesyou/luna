@@ -9,4 +9,8 @@ end
 
 if #arg == 0 then
     repl()
+else
+    for i = 1, #arg do
+        print(env.evaluate(iomodule.readFile(arg[i])))
+    end
 end
