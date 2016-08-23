@@ -84,6 +84,4 @@ function parser.parse(str)
   return parser.read_tokens(parser.tokenize(str))
 end
 
-print(debug_table(parser.parse("(+ 1 3)")))
-
 return parser

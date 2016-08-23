@@ -2,11 +2,11 @@ local env = require "env"
 
 function repl()
     while true do
-        print(env.evaluate(env))
+        print(env.evaluate(io.read()))
     end
 
 end
 
-if #args == 0 then
+if #arg == 0 then
     repl()
 end
