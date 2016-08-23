@@ -73,10 +73,10 @@ function eval(expr, env)
         return eval(exp, env)
     elseif expr[1] == "define" then
         local _, var, exp = table.unpack(expr)
-        env[var] = eval(exp, env)
+        env.dispatch[var] = eval(exp, env)
     elseif expr[1] == "set!" then
         local _, var, exp = table.unpack(expr)
-        env.find(var)[var] = eval(exp, env)
+        env.find(var).dispatch[var] = eval(exp, env)
     elseif expr[1] == "lambda" then
         local _, params, body = table.unpack(expr)
         return Proc.new(params, body, env)
