@@ -3,7 +3,7 @@ null = require "null"
 List = {}
 List.__index = List
 
-function List.new(table)
+function List.list(table)
 	local list
 	if #table == 0 then list = null else list = table end
 	setmetatable(list, List)
@@ -72,7 +72,7 @@ end
 -- fold s.t. 1+2+3 -> (1+2)+3
 -- folding only works if #list > 1
 function List.foldl(list, fn)
-	accumulator = list[1]
+	local accumulator = list[1]
 	return foldlhelper(list, 2, fn, accumulator)
 end
 
