@@ -23,7 +23,7 @@ function Env.standard_env()
         ["null?"] = function(obj) return obj == nil or #obj == 0 end,
         ["number?"] = function(obj) return type(obj) == "number" end,
         ["symbol?"] = function(obj) return getmetatable(obj) == Symbol.mt end,
-        ["procedure?"] = function(obj) return getmetable(obj) == Proc.mt end,
+        ["procedure?"] = function(obj) return getmetatable(obj) == Proc.mt end,
         ["print"] = function(obj) lprint(obj) end,
         ["begin"] = nil,
         ["list?"] = function(obj) return getmetatable(obj) == List.mt end,
