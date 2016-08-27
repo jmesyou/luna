@@ -1,7 +1,7 @@
-math = require "math"
-list = require "list"
-parser = require "parser"
-symbol = require "symbol"
+Math = require "math"
+List = require "list"
+Parser = require "parser"
+Symbol = require "symbol"
 local Env = {}
 Env.mt = {}
 
@@ -22,16 +22,14 @@ function Env.standard_env()
         ["not"] = function(x) return not x end,
         ["null?"] = function(obj) return obj == nil or #obj == 0 end,
         ["number?"] = function(obj) return type(obj) == "number" end,
-        ["symbol?"] = function(obj) return getmetatable(obj) == symbol.mt end,
+        ["symbol?"] = function(obj) return getmetatable(obj) == Symbol.mt end,
         ["procedure?"] = function(obj) return getmetable(obj) == Proc.mt end,
         ["print"] = function(obj) lprint(obj) end,
         ["begin"] = nil,
-        ["list"] = function(...) return list.new({...}) end,
-        ["list?"] = function(obj) return getmetatable(obj) == list.mt end,
-        ["car"] = list.head,
-        ["cdr"] = list.tail,
+        ["list?"] = function(obj) return getmetatable(obj) == List.mt end,
     }
-    for name, obj in pairs(math) do env.dispatch[name] = obj end
+    for name, fn in pairs(Math) do env.dispatch[name] = fn end
+    for name, fn in pairs(List) do env.dispatch[name] = fn end
     setmetatable(env, Env.mt)
     return env
 end
@@ -52,7 +50,7 @@ function Env.mt:find(key)
     local value = self.dispatch[key]
     if value == nil then
         if self.outer == nil then
-            return "ERRRRROOOOR"
+            error(string.format("%q is not defined", key))
         end
         return self.outer:find(key)
     end
@@ -62,31 +60,36 @@ end
 Env.global_env = Env.standard_env()
 
 function eval(expr, env)
-    if getmetatable(expr) == symbol.mt then
-        return env.dispatch[tostring(expr)]
-    elseif type(expr) == "number" then
+    if type(expr) == "number" then
         return expr
-    elseif expr[1] == "if" then
-        local _, test, conseq, alt = table.unpack(expr)
-        local exp
-        if eval(test, env) then exp = conseq else exp = alt end
-        return eval(exp, env)
-    elseif expr[1] == "define" then
-        local _, var, exp = table.unpack(expr)
-        env.dispatch[var] = eval(exp, env)
-    elseif expr[1] == "set!" then
-        local _, var, exp = table.unpack(expr)
-        env.find(var).dispatch[var] = eval(exp, env)
-    elseif expr[1] == "lambda" then
-        local _, params, body = table.unpack(expr)
-        return Proc.new(params, body, env)
-    else
-        local proc = eval(expr[1], env)
-        local args = {}
-        for index = 2, #expr do
-            args[#args+1] = (eval(expr[index], env))
+    elseif getmetatable(expr) == symbol.mt then
+        return env.dispatch[tostring(expr)]
+    elseif getmetatable(expr[1]) == symbol.mt then
+        local keyword = tostring(expr[1])
+        if keyword == "if" then
+            local _, test, conseq, alt = table.unpack(expr)
+            local exp
+            if eval(test, env) then exp = conseq else exp = alt end
+            return eval(exp, env)
+        elseif keyword == "define" then
+            local _, var, exp = table.unpack(expr)
+            env.dispatch[tostring(var)] = eval(exp, env)
+        elseif keyword == "set!" then
+            local _, var, exp = table.unpack(expr)
+            env.find(tostring(var)).dispatch[tostring(var)] = eval(exp, env)
+        elseif keyword == "lambda" then
+            local _, params, body = table.unpack(expr)
+            return Proc.new(params, body, env)
+        else
+            local proc = eval(expr[1], env)
+            local args = {}
+            for index = 2, #expr do
+                args[#args+1] = (eval(expr[index], env))
+            end
+            return proc(table.unpack(args))
         end
-        return proc(table.unpack(args))
+    else
+        error("unexpected error encountered")
     end
 end
 
@@ -104,6 +107,7 @@ function debug_table(tbl)
 end
 
 function Env.evaluate(str)
+    print(str)
     return eval(parser.parse(str), Env.global_env)
 end
 

@@ -1,12 +1,12 @@
 symbol = require "symbol"
 
-local parser = {}
+local Parser = {}
 
 local START = {}
 local STRING = {}
 local ATOM = {}
 
-function parser.tokenize(str)
+function Parser.tokenize(str)
   local state = START
   local tokens = {}
   local word = ""
@@ -29,14 +29,13 @@ function parser.tokenize(str)
         else    word = word .. char
         end
       else
-        print("ERRROOOOR")
-        return
+        error("unexpected parsing state")
       end
     end
     return tokens
 end
 
-function parser.read_tokens(tokens)
+function Parser.read_tokens(tokens)
   local ast = {}
   while #tokens > 0 do
     local token = table.remove(tokens, 1)
@@ -64,7 +63,7 @@ function debug_table(tbl)
     return out
 end
 
-function parser.atomize(str)
+function Parser.atomize(str)
   local atom = tonumber(str)
   if atom == nil then
     return symbol.new(str)
@@ -80,8 +79,8 @@ function wspace(char)
          string.byte(char) == 32     --whitespace
 end
 
-function parser.parse(str)
+function Parser.parse(str)
   return parser.read_tokens(parser.tokenize(str))
 end
 
-return parser
+return Parser

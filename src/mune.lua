@@ -1,22 +1,26 @@
 local env = require "env"
 local ioreader = require "iomodule"
 
-function repl(string)
-    if (string == nil) then
-        while true do
-            print(env.evaluate(io.read()))
-        end
-    elseif (type(string) == "string") then
-        print(env.evaluate(string))
-    end
+function repl()
+	if(string == nil) then
+		while true do
+			local ok, ret = pcall(env.evaluate, io.read())
+			print(ret)
+		end
+	elseif (type(string) == "string") then
+        print ok, ret = pcall(env.evaluate, io.read())
+		print(env.evaluate(string))
+	end
+end
 
+function compile()
+    --TODO
 end
 
 
 if #arg == 0 then
     repl(nil)
 else
-    --TODO implement multiple line reads && support for partial expressions
     for i = 1, #arg do
         repl(ioreader.readFile(arg[i]))
     end
