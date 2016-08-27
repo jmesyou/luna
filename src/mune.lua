@@ -25,11 +25,3 @@ else
         repl(ioreader.readFile(arg[i]))
     end
 end
-
-
-stringarr = {}
-stringarr[1] = "hello"
-stringarr[2] = "world"
-
-print(type(stringarr))
-print(type({"hello, world"}))

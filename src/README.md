@@ -1,10 +1,10 @@
-# Mune programming language, implemented in lua
+# Luna programming language, implemented in lua
 
 Creators : Jack You, Darren Mei
 
 Building:
 	Run the make.sh script
-	outputs mune.exe in the current directory
+	outputs luna.exe in the current directory
 
 Installation:
 	On Windows:
